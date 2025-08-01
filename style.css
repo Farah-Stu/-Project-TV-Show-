@@ -1,3 +1,28 @@
+ body{
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ }
 #root {
-  color: black;
+  color:rgb(24, 23, 23);
+  justify-content: center;
+  flex-wrap: wrap;
+  display: flex;
+  
 }
+
+ 
+ .episode-card{
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  border-radius: 8px;
+  background-color: white; 
+  max-width: 300px;
+  margin: 12px;
+
+}
+
+ img{
+  width: 100%;
+  height: auto;
+  border-radius: 5px;  
+ }
+ 
