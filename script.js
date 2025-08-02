@@ -37,36 +37,40 @@ function makePageForEpisodes(episodeList) {
 }
 
 function setupSearch(episodes) {
-  // Create a container to hold the search input, count, and dropdown
-  const searchContainer = document.createElement("div");
-  searchContainer.style.position = "fixed";
-  searchContainer.style.top = "10px";
-  searchContainer.style.left = "10px";
-  searchContainer.style.backgroundColor = "white";
-  searchContainer.style.padding = "10px";
-  searchContainer.style.zIndex = "1000";
-  searchContainer.style.maxWidth = "250px";
+  // Create or get the controls container
+  let controlsContainer = document.getElementById("controls");
+  if (!controlsContainer) {
+    controlsContainer = document.createElement("div");
+    controlsContainer.id = "controls";
+    document.body.insertBefore(controlsContainer, document.getElementById("root"));
+  }
+
+  // Style the controls container
+  controlsContainer.style.display = "flex";
+  controlsContainer.style.alignItems = "center";
+  controlsContainer.style.gap = "10px";
+  controlsContainer.style.padding = "10px";
+  controlsContainer.style.backgroundColor = "#f9f9f9";
+  //controlsContainer.style.borderBottom = "1px solid #ccc";
+
+  // Sticky positioning
+  controlsContainer.style.position = "sticky";
+  controlsContainer.style.top = "0";
+  controlsContainer.style.zIndex = "999"; // Keep it above other content
 
   // Search input
   const searchInput = document.createElement("input");
   searchInput.type = "text";
   searchInput.placeholder = "Search episodes...";
   searchInput.id = "search-input";
-  searchInput.style.marginBottom = "5px";
-  searchInput.style.display = "block";
-  searchInput.style.width = "100%";
+  searchInput.style.padding = "5px";
+  searchInput.style.flex = "1";
 
-  // Count display
-  const countDisplay = document.createElement("p");
-  countDisplay.id = "count-display";
-  countDisplay.textContent = `Displaying ${episodes.length}/${episodes.length} episodes`;
-  countDisplay.style.margin = "5px 0";
-
-  // Select dropdown
+  // Episode selector
   const episodeSelect = document.createElement("select");
   episodeSelect.id = "episode-select";
-  episodeSelect.style.width = "100%";
-  episodeSelect.style.marginBottom = "5px";
+  episodeSelect.style.padding = "5px";
+  episodeSelect.style.flex = "1";
 
   const defaultOption = document.createElement("option");
   defaultOption.value = "";
@@ -85,7 +89,19 @@ function setupSearch(episodes) {
     episodeSelect.appendChild(option);
   });
 
-  // Event listener for dropdown
+  // Count display
+  const countDisplay = document.createElement("p");
+  countDisplay.id = "count-display";
+  countDisplay.textContent = `Displaying ${episodes.length}/${episodes.length} episodes`;
+  countDisplay.style.margin = "0";
+  countDisplay.style.whiteSpace = "nowrap";
+
+  // Add all elements to the container
+  controlsContainer.appendChild(searchInput);
+  controlsContainer.appendChild(episodeSelect);
+  controlsContainer.appendChild(countDisplay);
+
+  // Episode select scroll logic
   episodeSelect.addEventListener("change", function () {
     const targetId = this.value;
     const targetElement = document.getElementById(targetId);
@@ -94,15 +110,7 @@ function setupSearch(episodes) {
     }
   });
 
-  // Add elements to the container
-  searchContainer.appendChild(episodeSelect);
-  searchContainer.appendChild(searchInput);
-  searchContainer.appendChild(countDisplay);
-  //searchContainer.appendChild(episodeSelect);
-
-  document.body.appendChild(searchContainer);
-
-  // Search logic
+  // Search filtering logic
   searchInput.addEventListener("input", function () {
     const query = searchInput.value.trim().toLowerCase();
     let matchCount = 0;
@@ -121,5 +129,7 @@ function setupSearch(episodes) {
     countDisplay.textContent = `Displaying ${matchCount}/${episodes.length} episodes`;
   });
 }
+
+
 
 window.onload = setup;
