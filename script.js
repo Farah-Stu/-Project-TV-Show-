@@ -1,5 +1,6 @@
-function setup() {
-  const allEpisodes = getAllEpisodes();
+async function setup() {
+const response = await fetch('https://api.tvmaze.com/shows/82/episodes');
+const allEpisodes = await response.json();
   makePageForEpisodes(allEpisodes);
   setupSearch(allEpisodes);
 }
