@@ -1,14 +1,28 @@
+const root = document.getElementById("root");
+
 async function setup() {
-const response = await fetch('https://api.tvmaze.com/shows/82/episodes');
-const allEpisodes = await response.json();
-  makePageForEpisodes(allEpisodes);
-  setupSearch(allEpisodes);
+  try {
+    root.textContent = "Loading episodes...";
+
+    const response = await fetch("https://api.tvmaze.com/shows/82/episodes");
+    if (!response.ok) {
+      throw new Error("Network response was not Ok");
+    }
+
+    const allEpisodes = await response.json();
+    makePageForEpisodes(allEpisodes);
+    setupSearch(allEpisodes);
+  } catch (error) {
+    root.innerHTML = "";
+
+    const errorMessage = document.createElement("p");
+    errorMessage.textContent = "Oops! Something went wrong.";
+    errorMessage.style.color = "red";
+
+    root.appendChild(errorMessage);
+  }
 }
-
 function makePageForEpisodes(episodeList) {
-  const rootElem = document.getElementById("root");
-  rootElem.innerHTML = ""; // Clear existing content
-
   episodeList.forEach((episode) => {
     const section = document.createElement("section");
     section.classList.add("episode-card");
@@ -17,7 +31,6 @@ function makePageForEpisodes(episodeList) {
       episode.number
     ).padStart(2, "0")}`;
 
-    // Give each section a unique ID so we can scroll to it later
     section.id = episodeCode;
 
     const title = document.createElement("h2");
@@ -33,7 +46,7 @@ function makePageForEpisodes(episodeList) {
     section.appendChild(image);
     section.appendChild(summary);
 
-    rootElem.appendChild(section);
+    root.appendChild(section);
   });
 }
 
@@ -43,7 +56,10 @@ function setupSearch(episodes) {
   if (!controlsContainer) {
     controlsContainer = document.createElement("div");
     controlsContainer.id = "controls";
-    document.body.insertBefore(controlsContainer, document.getElementById("root"));
+    document.body.insertBefore(
+      controlsContainer,
+      document.getElementById("root")
+    );
   }
 
   // Style the controls container
@@ -130,7 +146,5 @@ function setupSearch(episodes) {
     countDisplay.textContent = `Displaying ${matchCount}/${episodes.length} episodes`;
   });
 }
-
-
 
 window.onload = setup;
