@@ -2,8 +2,6 @@ const root = document.getElementById("root");
 
 async function setup() {
   try {
-    root.textContent = "Loading episodes...";
-
     const response = await fetch("https://api.tvmaze.com/shows/82/episodes");
     if (!response.ok) {
       throw new Error("Network response was not Ok");
