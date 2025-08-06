@@ -37,7 +37,6 @@ function makePageForEpisodes(episodeList) {
 }
 
 function setupSearch(episodes) {
-  // Create or get the controls container
   let controlsContainer = document.getElementById("controls");
   if (!controlsContainer) {
     controlsContainer = document.createElement("div");
@@ -45,32 +44,55 @@ function setupSearch(episodes) {
     document.body.insertBefore(controlsContainer, document.getElementById("root"));
   }
 
-  // Style the controls container
-  controlsContainer.style.display = "flex";
-  controlsContainer.style.alignItems = "center";
-  controlsContainer.style.gap = "10px";
-  controlsContainer.style.padding = "10px";
-  controlsContainer.style.backgroundColor = "#f9f9f9";
-  //controlsContainer.style.borderBottom = "1px solid #ccc";
+  const searchSection = createSearchSection(episodes);
+  const selectSection = createSelectSection(episodes);
 
-  // Sticky positioning
-  controlsContainer.style.position = "sticky";
-  controlsContainer.style.top = "0";
-  controlsContainer.style.zIndex = "999"; // Keep it above other content
+  controlsContainer.appendChild(selectSection);
+  controlsContainer.appendChild(searchSection);
+  
+}
 
-  // Search input
+function createSearchSection(episodes) {
+  const searchContainer = document.createElement("div");
+  searchContainer.classList.add("search-container");
+
   const searchInput = document.createElement("input");
   searchInput.type = "text";
   searchInput.placeholder = "Search episodes...";
   searchInput.id = "search-input";
-  searchInput.style.padding = "5px";
-  searchInput.style.flex = "1";
 
-  // Episode selector
+  const countDisplay = document.createElement("p");
+  countDisplay.id = "count-display";
+  countDisplay.textContent = `Displaying ${episodes.length}/${episodes.length} episodes`;
+
+  searchInput.addEventListener("input", function() {
+    const query = searchInput.value.trim().toLowerCase();
+    let matchCount = 0;
+
+    const episodeCards = document.querySelectorAll(".episode-card");
+    episodeCards.forEach((card, index) => {
+      const title = episodes[index].name.toLowerCase();
+      const summary = episodes[index].summary.toLowerCase();
+      const isMatch = title.includes(query) || summary.includes(query);
+      
+      card.style.display = isMatch ? "block" : "none";
+      if (isMatch) matchCount++;
+    });
+
+    countDisplay.textContent = `Displaying ${matchCount}/${episodes.length} episodes`;
+  });
+
+  searchContainer.appendChild(searchInput);
+  searchContainer.appendChild(countDisplay);
+  return searchContainer;
+}
+
+function createSelectSection(episodes) {
+  const selectContainer = document.createElement("div");
+  selectContainer.classList.add("select-container");
+
   const episodeSelect = document.createElement("select");
   episodeSelect.id = "episode-select";
-  episodeSelect.style.padding = "5px";
-  episodeSelect.style.flex = "1";
 
   const defaultOption = document.createElement("option");
   defaultOption.value = "";
@@ -89,20 +111,7 @@ function setupSearch(episodes) {
     episodeSelect.appendChild(option);
   });
 
-  // Count display
-  const countDisplay = document.createElement("p");
-  countDisplay.id = "count-display";
-  countDisplay.textContent = `Displaying ${episodes.length}/${episodes.length} episodes`;
-  countDisplay.style.margin = "0";
-  countDisplay.style.whiteSpace = "nowrap";
-
-  // Add all elements to the container
-  controlsContainer.appendChild(searchInput);
-  controlsContainer.appendChild(episodeSelect);
-  controlsContainer.appendChild(countDisplay);
-
-  // Episode select scroll logic
-  episodeSelect.addEventListener("change", function () {
+  episodeSelect.addEventListener("change", function() {
     const targetId = this.value;
     const targetElement = document.getElementById(targetId);
     if (targetElement) {
@@ -110,24 +119,8 @@ function setupSearch(episodes) {
     }
   });
 
-  // Search filtering logic
-  searchInput.addEventListener("input", function () {
-    const query = searchInput.value.trim().toLowerCase();
-    let matchCount = 0;
-
-    const episodeCards = document.querySelectorAll(".episode-card");
-
-    episodeCards.forEach((card, index) => {
-      const title = episodes[index].name.toLowerCase();
-      const summary = episodes[index].summary.toLowerCase();
-      const isMatch = title.includes(query) || summary.includes(query);
-
-      card.style.display = isMatch ? "block" : "none";
-      if (isMatch) matchCount++;
-    });
-
-    countDisplay.textContent = `Displaying ${matchCount}/${episodes.length} episodes`;
-  });
+  selectContainer.appendChild(episodeSelect);
+  return selectContainer;
 }
 
 

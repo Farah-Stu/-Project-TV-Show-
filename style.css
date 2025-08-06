@@ -27,4 +27,36 @@
   height: auto;
   border-radius: 5px;  
  }
+
+ #controls {
+  display:flex;
+  align-items: left;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+
+}
+
+.search-container, .select-container {
+  display: flex;
+  align-items: left;
+  gap: 10px;
+  flex: 1;
+  width: 100px;
+}
+
+#search-input, #episode-select {
+  padding: 5px;
+  flex: 1;
+  width: 200px;
+  
+}
+
+#count-display {
+  margin: 0;
+  white-space: nowrap;
+}
  
