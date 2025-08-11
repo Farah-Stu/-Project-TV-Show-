@@ -91,12 +91,11 @@ function makePageForEpisodes(episodes) {
   root.appendChild(fragment);
 }
 
-function setupSearch(episodes) {
-  const controls = document.getElementById("controls");
-
-  const select = document.createElement("select");
-  select.id = "episode-select";
-  select.innerHTML = `<option value="" disabled selected>Jump to episode...</option>` +
+function setupEpisodeControls(episodes) {
+  const episodeSelect = document.createElement("select");
+  episodeSelect.id = "episode-select";
+  episodeSelect.innerHTML =
+    `<option value="" disabled selected>Jump to episode...</option>` +
     episodes.map(ep => {
       const code = formatEpisodeCode(ep.season, ep.number);
       return `<option value="${code}">${code} - ${ep.name}</option>`;
@@ -106,15 +105,13 @@ function setupSearch(episodes) {
   searchInput.id = "search-input";
   searchInput.placeholder = "Search episodes...";
 
-  
-
   const countDisplay = document.createElement("p");
   countDisplay.id = "count-display";
   countDisplay.textContent = `Displaying ${episodes.length}/${episodes.length} episodes`;
 
-  controls.append(select, searchInput, countDisplay);
+  controls.append(episodeSelect, searchInput, countDisplay);
 
-  select.addEventListener("change", e => {
+  episodeSelect.addEventListener("change", e => {
     document.getElementById(e.target.value)?.scrollIntoView({ behavior: "smooth" });
   });
 
@@ -122,7 +119,9 @@ function setupSearch(episodes) {
     const query = searchInput.value.trim().toLowerCase();
     let matches = 0;
     document.querySelectorAll(".episode-card").forEach(card => {
-      const match = card.dataset.name.includes(query) || card.dataset.summary.includes(query);
+      const match =
+        card.dataset.name.includes(query) ||
+        card.dataset.summary.includes(query);
       card.style.display = match ? "block" : "none";
       if (match) matches++;
     });
