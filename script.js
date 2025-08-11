@@ -1,148 +1,79 @@
+document.addEventListener("DOMContentLoaded", setup);
+
 const root = document.getElementById("root");
+
+function formatEpisodeCode(season, number) {
+  return `S${String(season).padStart(2, "0")}E${String(number).padStart(2, "0")}`;
+}
 
 async function setup() {
   try {
-    const response = await fetch("https://api.tvmaze.com/shows/82/episodes");
-    if (!response.ok) {
-      throw new Error("Network response was not Ok");
-    }
+    const res = await fetch("https://api.tvmaze.com/shows/82/episodes");
+    if (!res.ok) throw new Error("Network error");
 
-    const allEpisodes = await response.json();
-    makePageForEpisodes(allEpisodes);
-    setupSearch(allEpisodes);
-  } catch (error) {
-    root.innerHTML = "";
-
-    const errorMessage = document.createElement("p");
-    errorMessage.textContent = "Oops! Something went wrong.";
-    errorMessage.style.color = "red";
-
-    root.appendChild(errorMessage);
+    const episodes = await res.json();
+    makePageForEpisodes(episodes);
+    setupSearch(episodes);
+  } catch {
+    root.innerHTML = `<p class="error-message">Oops! Something went wrong.</p>`;
   }
 }
-function makePageForEpisodes(episodeList) {
-  episodeList.forEach((episode) => {
+
+function makePageForEpisodes(episodes) {
+  const fragment = document.createDocumentFragment();
+  episodes.forEach(ep => {
     const section = document.createElement("section");
     section.classList.add("episode-card");
+    section.dataset.name = ep.name.toLowerCase();
+    section.dataset.summary = ep.summary.toLowerCase();
+    section.id = formatEpisodeCode(ep.season, ep.number);
 
-    const episodeCode = `S${String(episode.season).padStart(2, "0")}E${String(
-      episode.number
-    ).padStart(2, "0")}`;
+    section.innerHTML = `
+      <h2>${ep.name} - ${section.id}</h2>
+      <img src="${ep.image.medium}" alt="${ep.name}">
+      <div>${ep.summary}</div>
+    `;
 
-    section.id = episodeCode;
-
-    const title = document.createElement("h2");
-    title.textContent = `${episode.name} - ${episodeCode}`;
-
-    const image = document.createElement("img");
-    image.src = episode.image.medium;
-
-    const summary = document.createElement("div");
-    summary.innerHTML = episode.summary;
-
-    section.appendChild(title);
-    section.appendChild(image);
-    section.appendChild(summary);
-
-    root.appendChild(section);
+    fragment.appendChild(section);
   });
+  root.appendChild(fragment);
 }
 
 function setupSearch(episodes) {
-  // Create or get the controls container
-  let controlsContainer = document.getElementById("controls");
-  if (!controlsContainer) {
-    controlsContainer = document.createElement("div");
-    controlsContainer.id = "controls";
-    document.body.insertBefore(
-      controlsContainer,
-      document.getElementById("root")
-    );
-  }
+  const controls = document.getElementById("controls");
 
-  // Style the controls container
-  controlsContainer.style.display = "flex";
-  controlsContainer.style.alignItems = "center";
-  controlsContainer.style.gap = "10px";
-  controlsContainer.style.padding = "10px";
-  controlsContainer.style.backgroundColor = "#f9f9f9";
-  //controlsContainer.style.borderBottom = "1px solid #ccc";
+  const select = document.createElement("select");
+  select.id = "episode-select";
+  select.innerHTML = `<option value="" disabled selected>Jump to episode...</option>` +
+    episodes.map(ep => {
+      const code = formatEpisodeCode(ep.season, ep.number);
+      return `<option value="${code}">${code} - ${ep.name}</option>`;
+    }).join("");
 
-  // Sticky positioning
-  controlsContainer.style.position = "sticky";
-  controlsContainer.style.top = "0";
-  controlsContainer.style.zIndex = "999"; // Keep it above other content
-
-  // Search input
   const searchInput = document.createElement("input");
-  searchInput.type = "text";
-  searchInput.placeholder = "Search episodes...";
   searchInput.id = "search-input";
-  searchInput.style.padding = "5px";
-  searchInput.style.flex = "1";
+  searchInput.placeholder = "Search episodes...";
 
-  // Episode selector
-  const episodeSelect = document.createElement("select");
-  episodeSelect.id = "episode-select";
-  episodeSelect.style.padding = "5px";
-  episodeSelect.style.flex = "1";
+  
 
-  const defaultOption = document.createElement("option");
-  defaultOption.value = "";
-  defaultOption.textContent = "Jump to episode...";
-  defaultOption.disabled = true;
-  defaultOption.selected = true;
-  episodeSelect.appendChild(defaultOption);
-
-  episodes.forEach((episode) => {
-    const episodeCode = `S${String(episode.season).padStart(2, "0")}E${String(
-      episode.number
-    ).padStart(2, "0")}`;
-    const option = document.createElement("option");
-    option.value = episodeCode;
-    option.textContent = `${episodeCode} - ${episode.name}`;
-    episodeSelect.appendChild(option);
-  });
-
-  // Count display
   const countDisplay = document.createElement("p");
   countDisplay.id = "count-display";
   countDisplay.textContent = `Displaying ${episodes.length}/${episodes.length} episodes`;
-  countDisplay.style.margin = "0";
-  countDisplay.style.whiteSpace = "nowrap";
 
-  // Add all elements to the container
-  controlsContainer.appendChild(searchInput);
-  controlsContainer.appendChild(episodeSelect);
-  controlsContainer.appendChild(countDisplay);
+  controls.append(select, searchInput, countDisplay);
 
-  // Episode select scroll logic
-  episodeSelect.addEventListener("change", function () {
-    const targetId = this.value;
-    const targetElement = document.getElementById(targetId);
-    if (targetElement) {
-      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+  select.addEventListener("change", e => {
+    document.getElementById(e.target.value)?.scrollIntoView({ behavior: "smooth" });
   });
 
-  // Search filtering logic
-  searchInput.addEventListener("input", function () {
+  searchInput.addEventListener("input", () => {
     const query = searchInput.value.trim().toLowerCase();
-    let matchCount = 0;
-
-    const episodeCards = document.querySelectorAll(".episode-card");
-
-    episodeCards.forEach((card, index) => {
-      const title = episodes[index].name.toLowerCase();
-      const summary = episodes[index].summary.toLowerCase();
-      const isMatch = title.includes(query) || summary.includes(query);
-
-      card.style.display = isMatch ? "block" : "none";
-      if (isMatch) matchCount++;
+    let matches = 0;
+    document.querySelectorAll(".episode-card").forEach(card => {
+      const match = card.dataset.name.includes(query) || card.dataset.summary.includes(query);
+      card.style.display = match ? "block" : "none";
+      if (match) matches++;
     });
-
-    countDisplay.textContent = `Displaying ${matchCount}/${episodes.length} episodes`;
+    countDisplay.textContent = `Displaying ${matches}/${episodes.length} episodes`;
   });
 }
-
-window.onload = setup;
