@@ -13,16 +13,63 @@ function formatEpisodeCode(season, number) {
 
 async function setup() {
   try {
-    const res = await fetch("https://api.tvmaze.com/shows/82/episodes");
-    if (!res.ok) throw new Error("Network error");
+    const showSelect = document.createElement("select");
+    showSelect.id = "show-select";
+    controls.appendChild(showSelect);
 
-    const episodes = await res.json();
-    makePageForEpisodes(episodes);
-    setupSearch(episodes);
-  } catch {
-    root.innerHTML = `<p class="error-message">Oops! Something went wrong.</p>`;
+    if (cachedShows.length === 0) {
+      const res = await fetch("https://api.tvmaze.com/shows");
+      if (!res.ok) throw new Error("Network error");
+      cachedShows = await res.json();
+      cachedShows.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+    }
+
+    showSelect.innerHTML =
+      `<option value="" disabled>Select a show...</option>` +
+      cachedShows.map(show => `<option value="${show.id}">${show.name}</option>`).join("");
+
+    // Load the first alphabetical show immediately
+    const firstShow = cachedShows[0];
+    showSelect.value = firstShow.id;
+    await loadEpisodes(firstShow.id);
+
+    // Handle dropdown changes
+    showSelect.addEventListener("change", async e => {
+      const showId = e.target.value;
+      await loadEpisodes(showId);
+    });
+
+  } catch (err) {
+    root.innerHTML = `<p class="error-message">Oops! Something went wrong loading shows.</p>`;
+    console.error(err);
   }
 }
+
+async function loadEpisodes(showId) {
+  try {
+    root.innerHTML = "";
+    const extraControls = Array.from(controls.children).filter(el => el.id !== "show-select");
+    extraControls.forEach(el => el.remove());
+
+    let episodes;
+    if (cachedEpisodes[showId]) {
+      episodes = cachedEpisodes[showId];
+    } else {
+      const res = await fetch(`https://api.tvmaze.com/shows/${showId}/episodes`);
+      if (!res.ok) throw new Error("Network error");
+      episodes = await res.json();
+      cachedEpisodes[showId] = episodes;
+    }
+
+    makePageForEpisodes(episodes);
+    setupEpisodeControls(episodes);
+
+  } catch (err) {
+    root.innerHTML = `<p class="error-message">Oops! Something went wrong loading episodes.</p>`;
+    console.error(err);
+  }
+}
+
 
 function makePageForEpisodes(episodes) {
   const fragment = document.createDocumentFragment();
