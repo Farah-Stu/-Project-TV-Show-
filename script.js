@@ -1,6 +1,11 @@
 document.addEventListener("DOMContentLoaded", setup);
 
 const root = document.getElementById("root");
+const controls = document.getElementById("controls");
+
+let cachedEpisodes = {}; // { showId: [episodes] }
+let cachedShows = []; // store shows list so we don't refetch
+
 
 function formatEpisodeCode(season, number) {
   return `S${String(season).padStart(2, "0")}E${String(number).padStart(2, "0")}`;
