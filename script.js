@@ -83,7 +83,7 @@ function makePageForEpisodes(episodes) {
     section.innerHTML = `
       <h2>${ep.name} - ${section.id}</h2>
       <img src="${ep.image.medium}" alt="${ep.name}">
-      <div>${ep.summary}</div>
+      <div>${ep.summary || ""}</div>
     `;
 
     fragment.appendChild(section);
