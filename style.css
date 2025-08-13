@@ -11,14 +11,13 @@ body{
   margin-top: 10px; 
 }
 
-
 .episode-card{
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 16px;
   border-radius: 8px;
   background-color: white; 
   max-width: 300px;
-  margin: 16px;  
+  margin: 12px;  
 }
 
 
@@ -41,6 +40,11 @@ img{
   z-index: 999;
 }
 
+.search-container, .select-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;  
+}
 
 /* Search & select input */
 #search-input,
@@ -51,8 +55,6 @@ img{
   border-radius: 8px;                    
 }
 
-
-/* Count display text */
 #count-display {
   margin: 0;
   white-space: nowrap;
@@ -63,3 +65,4 @@ img{
 .error-message {
   color: red;
 }
+ 

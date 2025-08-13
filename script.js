@@ -91,40 +91,95 @@ function makePageForEpisodes(episodes) {
   root.appendChild(fragment);
 }
 
-function setupEpisodeControls(episodes) {
-  const episodeSelect = document.createElement("select");
-  episodeSelect.id = "episode-select";
-  episodeSelect.innerHTML =
-    `<option value="" disabled selected>Jump to episode...</option>` +
-    episodes.map(ep => {
-      const code = formatEpisodeCode(ep.season, ep.number);
-      return `<option value="${code}">${code} - ${ep.name}</option>`;
-    }).join("");
+function setupSearch(episodes) {
+  let controlsContainer = document.getElementById("controls");
+  if (!controlsContainer) {
+    controlsContainer = document.createElement("div");
+    controlsContainer.id = "controls";
+    document.body.insertBefore(
+      controlsContainer,
+      document.getElementById("root")
+    );
+  }
+
+  const searchSection = createSearchSection(episodes);
+  const selectSection = createSelectSection(episodes);
+
+  controlsContainer.appendChild(selectSection);
+  controlsContainer.appendChild(searchSection);
+  
+}
+
+function createSearchSection(episodes) {
+  const searchContainer = document.createElement("div");
+  searchContainer.classList.add("search-container");
+
 
   const searchInput = document.createElement("input");
   searchInput.id = "search-input";
-  searchInput.placeholder = "Search episodes...";
+
 
   const countDisplay = document.createElement("p");
   countDisplay.id = "count-display";
   countDisplay.textContent = `Displaying ${episodes.length}/${episodes.length} episodes`;
 
-  controls.append(episodeSelect, searchInput, countDisplay);
-
-  episodeSelect.addEventListener("change", e => {
-    document.getElementById(e.target.value)?.scrollIntoView({ behavior: "smooth" });
-  });
-
-  searchInput.addEventListener("input", () => {
+  searchInput.addEventListener("input", function() {
     const query = searchInput.value.trim().toLowerCase();
-    let matches = 0;
-    document.querySelectorAll(".episode-card").forEach(card => {
-      const match =
-        card.dataset.name.includes(query) ||
-        card.dataset.summary.includes(query);
-      card.style.display = match ? "block" : "none";
-      if (match) matches++;
+    let matchCount = 0;
+
+    const episodeCards = document.querySelectorAll(".episode-card");
+    episodeCards.forEach((card, index) => {
+      const title = episodes[index].name.toLowerCase();
+      const summary = episodes[index].summary.toLowerCase();
+      const isMatch = title.includes(query) || summary.includes(query);
+      
+      card.style.display = isMatch ? "block" : "none";
+      if (isMatch) matchCount++;
     });
-    countDisplay.textContent = `Displaying ${matches}/${episodes.length} episodes`;
+
+    countDisplay.textContent = `Displaying ${matchCount}/${episodes.length} episodes`;
   });
+
+  searchContainer.appendChild(searchInput);
+  searchContainer.appendChild(countDisplay);
+  return searchContainer;
 }
+
+function createSelectSection(episodes) {
+  const selectContainer = document.createElement("div");
+  selectContainer.classList.add("select-container");
+
+  const episodeSelect = document.createElement("select");
+  episodeSelect.id = "episode-select";
+
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = "Jump to episode...";
+  defaultOption.disabled = true;
+  defaultOption.selected = true;
+  episodeSelect.appendChild(defaultOption);
+
+  episodes.forEach((episode) => {
+    const episodeCode = `S${String(episode.season).padStart(2, "0")}E${String(
+      episode.number
+    ).padStart(2, "0")}`;
+    const option = document.createElement("option");
+    option.value = episodeCode;
+    option.textContent = `${episodeCode} - ${episode.name}`;
+    episodeSelect.appendChild(option);
+  });
+
+  episodeSelect.addEventListener("change", function() {
+    const targetId = this.value;
+    const targetElement = document.getElementById(targetId);
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+
+  selectContainer.appendChild(episodeSelect);
+  return selectContainer;
+}
+
+window.onload = setup;
+
