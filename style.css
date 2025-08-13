@@ -11,7 +11,6 @@ body{
   margin-top: 10px; 
 }
 
- 
 .episode-card{
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 16px;
@@ -26,26 +25,26 @@ img{
   width: 100%;
   height: auto;
   border-radius: 5px;  
- }
+}
 
+
+/* Controls container */
 #controls {
-  display:flex;
-  align-items: left;
+  display: flex;
+  align-items: center;
   gap: 10px;
   padding: 10px;
   background-color: #f9f9f9;
-  position: sticky;  
+  position: sticky;
   top: 0;
   z-index: 999;
 }
-
 
 .search-container, .select-container {
   display: flex;
   align-items: center;
   gap: 10px;  
 }
-
 
 /* Search & select input */
 #search-input,
@@ -56,9 +55,14 @@ img{
   border-radius: 8px;                    
 }
 
-
 #count-display {
   margin: 0;
   white-space: nowrap;
+}
+
+
+/* Error message */
+.error-message {
+  color: red;
 }
  
