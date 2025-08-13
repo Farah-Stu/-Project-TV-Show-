@@ -1,4 +1,3 @@
-//You can edit ALL of the code here
 function setup() {
   const allEpisodes = getAllEpisodes();
   makePageForEpisodes(allEpisodes);
@@ -6,34 +5,33 @@ function setup() {
 
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
-  rootElem.textContent = `Got ${episodeList.length} episode(s)`;
+  rootElem.innerHTML = ""; // Clear old content, no count text
 
   episodeList.forEach((episode) => {
     const section = document.createElement("section");
     section.classList.add("episode-card");
 
-    const episodeCode= `S${String(episode.season).padStart(2, "0")}E${String(episode.number).padStart(2, "0")}`;
-    const codeElement = document.createElement("h3");
-    codeElement.textContent = episodeCode;
-    section.appendChild(codeElement);
-
+    // Title + episode code together
+    const episodeCode = `S${String(episode.season).padStart(2, "0")}E${String(episode.number).padStart(2, "0")}`;
     const title = document.createElement("h2");
-    title.textContent = episode.name;
+    title.textContent = `${episode.name} – ${episodeCode}`;
 
-    const currentSeason = document.createElement("h2");
-    currentSeason.textContent = `Season ${episode.season}`;
-
+    // Episode image
     const image = document.createElement("img");
     image.src = episode.image.medium;
-    const summary = document.createElement("p");
-    summary.textContent = episode.summary;
+    image.alt = episode.name;
 
+    // Summary with HTML formatting preserved
+    const summary = document.createElement("p");
+    summary.innerHTML = episode.summary;
+
+    // Append in correct order
     section.appendChild(title);
-    section.appendChild(currentSeason);
-    section.appendChild(summary);
     section.appendChild(image);
+    section.appendChild(summary);
 
     rootElem.appendChild(section);
   });
 }
+
 window.onload = setup;
