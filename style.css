@@ -66,3 +66,11 @@ img{
   color: red;
 }
  
+.episode-card h2 {
+  border: 2px solid #ccc;   
+  border-radius: 6px;       
+  padding: 6px 10px;        
+  margin-bottom: 8px;       
+  text-align: center;       
+  background-color: #f5f5f5; 
+}
