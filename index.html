@@ -8,15 +8,19 @@
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 </head>
 <body>
-<select id ="showSelect">
-  <option value="">Loading shows...</option>
-</select>
+  <select id="showSelect">
+    <option value="">Loading shows...</option>
+  </select>
+
   <label for="q">Search Episodes:</label>
-
   <select id="episodeSelect"></select>
-    <input type="search" id="q" name="q" placeholder="Search by name or summary" />
 
-  <p id="episodeCount"></p>
+  <!-- Group search box and episode count inline -->
+  <div id="searchContainer" style="display: inline-block; vertical-align: middle;">
+    <input type="search" id="q" name="q" placeholder="Search by name or summary" />
+    <span id="episodeCount" style="margin-left: 10px;"></span>
+  </div>
+
   <div id="root"></div>
 
   <script src="script.js"></script>
