@@ -1,76 +1,115 @@
-body{
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
- }
-
-
-#root {
-  color:rgb(24, 23, 23);
-  justify-content: center;
-  flex-wrap: wrap;
-  display: flex;
-  margin-top: 10px; 
-}
-
-.episode-card{
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 16px;
-  border-radius: 8px;
-  background-color: white; 
-  max-width: 300px;
-  margin: 12px;  
-}
-
-
-img{
-  width: 100%;
-  height: auto;
-  border-radius: 5px;  
-}
-
-
-/* Controls container */
-#controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background-color: #f9f9f9;
-  position: sticky;
-  top: 0;
-  z-index: 999;
-}
-
-.search-container, .select-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;  
-}
-
-/* Search & select input */
-#search-input,
-#episode-select {
-  padding: 4px 8px;     
-  font-size: 0.85rem;    
-  width: 300px;  
-  border-radius: 8px;                    
-}
-
-#count-display {
+/* ===== General Page Styles ===== */
+body {
+  font-family: Arial, sans-serif;
   margin: 0;
-  white-space: nowrap;
+  padding: 0;
+  background-color: #f8f9fa;
+  color: #333;
 }
 
-
-/* Error message */
-.error-message {
-  color: red;
+/* ===== Navigation Bar ===== */
+#navigating {
+  padding: 15px;
+  display: flex;
+  justify-content: flex-start;
 }
- 
+
+/* ===== Back to Shows Button ===== */
+#backToShows {
+  background-color: #4CAF50; /* green */
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#backToShows:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+#backToShows:active {
+  background-color: #3e8e41;
+  transform: scale(0.98);
+}
+
+/* ===== Search Bar & Dropdown ===== */
+#showsView label,
+#episodesView label {
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+#showSearch,
+#showSelect,
+#q,
+#episodeSelect {
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Align search bar and dropdown next to each other */
+#showsView {
+  padding: 15px;
+}
+
+#showsView label,
+#showsView input,
+#showsView select {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* ===== Show & Episode Cards (Grid Layout) ===== */
+#showsRoot,
+#root {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 15px;
+  padding: 15px;
+}
+
+.show-card,
+.episode-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.show-card:hover,
+.episode-card:hover {
+  transform: scale(1.03);
+}
+
+.show-card img,
+.episode-card img {
+  width: 100%;
+  border-radius: 5px;
+}
+
+/* ===== Titles on Top of Images ===== */
+.show-card h3,
 .episode-card h2 {
-  border: 2px solid #ccc;   
-  border-radius: 6px;       
-  padding: 6px 10px;        
-  margin-bottom: 8px;       
-  text-align: center;       
-  background-color: #f5f5f5; 
+  font-size: 16px;
+  margin: 0 0 8px 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* ===== Count Text ===== */
+#showCount,
+#episodeCount {
+  padding: 10px 15px;
+  font-size: 14px;
+  color: #666;
 }
