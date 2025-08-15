@@ -1,28 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TV Show Project | Fatima Z Belkedari (Farah-Stu)</title>
-  <link href="style.css" rel="stylesheet" />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-</head>
-<body>
-  <select id="showSelect">
-    <option value="">Loading shows...</option>
-  </select>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TV Show Project | Fatima Z Belkedari (Farah-Stu)</title>
+    <link href="style.css" rel="stylesheet" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <div id="navigating">
+      <button id="backToShows">Back to Shows</button>
+    </div>
 
-  <label for="q">Search Episodes:</label>
-  <select id="episodeSelect"></select>
+    <!-- Shows View -->
+    <div id="showsView">
+      <label for="showSearch">Search Shows: </label>
+      <input
+        type="search"
+        id="showSearch"
+        placeholder="Search by name, genre, or summary"
+      />
 
-  <!-- Group search box and episode count inline -->
-  <div id="searchContainer" style="display: inline-block; vertical-align: middle;">
-    <input type="search" id="q" name="q" placeholder="Search by name or summary" />
-    <span id="episodeCount" style="margin-left: 10px;"></span>
-  </div>
+      <label for="showSelect">Choose a show:</label>
+      <select id="showSelect"></select>
 
-  <div id="root"></div>
+      <p id="showCount"></p>
+      <div id="showsRoot"></div>
+    </div>
 
-  <script src="script.js"></script>
-</body>
+    <!-- Episodes View -->
+    <div id="episodesView" style="display: none;">
+      <h2 id="currentShowTitle"></h2>
+
+      <label for="q">Search Episodes:</label>
+      <input
+        type="search"
+        id="q"
+        name="q"
+        placeholder="Search by name or summary"
+      />
+      <select id="episodeSelect"></select>
+
+      <p id="episodeCount"></p>
+      <div id="root"></div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
 </html>
