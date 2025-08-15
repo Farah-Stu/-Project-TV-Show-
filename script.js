@@ -52,12 +52,24 @@ function setup() {
 
   backButton.addEventListener("click", showShowsView);
 
-  // ✅ Event listener for dropdown
+  // ✅ Show selection listener
   showSelect.addEventListener("change", function () {
     const selectedId = showSelect.value;
     const selectedShow = allShows.find((s) => s.id == selectedId);
     if (selectedShow) {
       loadShowEpisodes(selectedShow);
+    }
+  });
+
+  // ✅ Episode selection listener
+  episodeSelect.addEventListener("change", function () {
+    const selectedIndex = episodeSelect.selectedIndex;
+    if (selectedIndex >= 0 && currentEpisodes[selectedIndex]) {
+      const selectedEpisode = currentEpisodes[selectedIndex];
+      const episodeElement = document.getElementById(`episode-${selectedEpisode.id}`);
+      if (episodeElement) {
+        episodeElement.scrollIntoView({ behavior: "smooth" });
+      }
     }
   });
 
